@@ -94,20 +94,21 @@ storage:
   encryption_key:
 
 # https://www.authelia.com/configuration/notifications/introduction/
-# notifier:
-#   disable_startup_check: false
-#   # For testing purposes, notifications can be sent in a file. Be sure to map the volume in docker-compose.
-#   filesystem:
-#     filename: '/config/notification.txt'
 notifier:
   disable_startup_check: false
-  smtp:
-    username: 'admin@domain.tld' # Username für deinen Mailserver
-    password: 'Sicheres Password' # alternativ Secret anlegen AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE
-    address: 'smtp://mail.domain.tld:587'
-    sender: 'Authelia Notifier <admin@domain.tld>'
-    subject: "[Notification domain.tld] {titel}"
-    startup_check_address: 'test@domain.tld'
-    disable_starttls: false
-    disable_html_emails: false
-    disable_require_tls: false
+  # For testing purposes, notifications can be sent in a file. Be sure to map the volume in docker-compose.
+  filesystem:
+    filename: '/config/notification.txt'
+# SMTP nur aktivieren wenn es sicher funktioniert bei euch 
+#notifier:
+#  disable_startup_check: false
+#  smtp:
+#    username: 'admin@domain.tld' # Username für deinen Mailserver
+#    password: 'Sicheres Password' # alternativ Secret anlegen AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE
+#    address: 'smtp://mail.domain.tld:587'
+#    sender: 'Authelia Notifier <admin@domain.tld>'
+#    subject: "[Notification domain.tld] {titel}"
+#    startup_check_address: 'test@domain.tld'
+#    disable_starttls: false
+#    disable_html_emails: false
+#    disable_require_tls: false
