@@ -1,0 +1,113 @@
+###############################################################
+#                   Authelia configuration                    #
+###############################################################
+
+theme: dark
+identity_validation:
+  reset_password:
+    jwt_secret: 
+
+server:
+  address: tcp://0.0.0.0:9091/
+  # buffers:
+  #   read: 4096
+  #   write: 4096
+  # endpoints:
+  #   enable_pprof: false
+  #   enable_expvars: false
+  # disable_healthcheck: false
+  tls:
+    key: ""
+    certificate: ""
+
+# https://www.authelia.com/configuration/miscellaneous/logging/
+log:
+  level: error
+  format: json
+  file_path: /config/authelia.log
+  keep_stdout: true
+
+# https://www.authelia.com/configuration/second-factor/time-based-one-time-password/
+totp:
+  issuer: domain.tld #check Variable in docker-compose.yml
+  period: 30
+  skew: 1
+
+# AUTHELIA_DUO_PLACEHOLDER
+
+# https://www.authelia.com/reference/guides/passwords/
+authentication_backend:
+  password_reset:
+    disable: false
+  refresh_interval: 5m
+  file:
+    path: /config/users.yml
+    password:
+      algorithm: argon2id
+      iterations: 1
+      salt_length: 16
+      parallelism: 8
+      memory: 256 # blocks this much of the RAM
+
+# https://www.authelia.com/overview/authorization/access-control/
+access_control:
+  default_policy: deny
+  rules:
+    - domain: 'authelia.domain.tld' # Hier deine Authelia Domain einsetzen.
+      policy: bypass
+      networks: # Optional
+        - 10.0.0.0/8
+        - 192.168.0.0/16
+        - 172.16.0.0/12
+    - domain:
+        - "*.domain.tld" # Wildcard Adresse für Domain optional
+        - "traefik.domain.tld" # Hier deine Traefik Domain einsetzen.
+        - "domain.tld" # Hier deine Domain einsetzen.
+      policy: two_factor
+
+# https://www.authelia.com/configuration/session/introduction/
+
+session:
+  name: authelia_session
+  same_site: lax
+  secret: 
+  expiration: 5h
+  inactivity: 15m
+  remember_me: 10M
+  cookies:
+    - domain: 'domain.tld'
+      authelia_url: https://authelia.domain.tld # Authelia URL
+      default_redirection_url: https://authelia.domain.tld/ # Default Redirect URL
+
+# https://www.authelia.com/configuration/security/regulation/
+regulation:
+  max_retries: 3
+  find_time: 10m
+  ban_time: 12h
+  
+# https://www.authelia.com/configuration/storage/introduction/
+storage:
+  # For local storage, uncomment lines below and comment out mysql. https://docs.authelia.com/configuration/storage/sqlite.html
+  # This is good for the beginning. If you have a busy site then switch to other databases.
+  local:
+   path: '/config/db.sqlite3'
+  encryption_key:
+
+# https://www.authelia.com/configuration/notifications/introduction/
+# notifier:
+#   disable_startup_check: false
+#   # For testing purposes, notifications can be sent in a file. Be sure to map the volume in docker-compose.
+#   filesystem:
+#     filename: '/config/notification.txt'
+notifier:
+  disable_startup_check: false
+  smtp:
+    username: 'admin@domain.tld' # Username für deinen Mailserver
+    password: 'Sicheres Password' # alternativ Secret anlegen AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE
+    address: 'smtp://mail.domain.tld:587'
+    sender: 'Authelia Notifier <admin@domain.tld>'
+    subject: "[Notification domain.tld] {titel}"
+    startup_check_address: 'test@domain.tld'
+    disable_starttls: false
+    disable_html_emails: false
+    disable_require_tls: false
