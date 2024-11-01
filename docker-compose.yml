@@ -4,3 +4,4 @@ include:
   - compose/traefik-crowdsec-bouncer.yml
   - compose/traefik.yml
   - compose/networks.yml
+  - compose/authelia.yml
