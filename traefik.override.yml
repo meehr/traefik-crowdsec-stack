@@ -1,0 +1,4 @@
+services:
+  traefik:
+    labels:
+      traefik.http.routers.traefik-dashboad.middlewares: default@file,middlewares-authelia@file #traefik-dashboard-auth@file,chain-basic-auth@file #middlewares-rate-limit@file,middlewares-secure-headers@file,traefik-dashboard-auth@file,default@file,middelwares-authelia@file
